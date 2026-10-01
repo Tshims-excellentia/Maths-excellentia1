@@ -1,2 +1,419 @@
-# Maths-excellentia1
-Application de mathématiques pour le test Excellentia
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Préparation Test Excellentia 2026 - Mathématiques & Logique</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 15px; display: flex; justify-content: center; align-items: center; min-height: 100vh; box-sizing: border-box; }
+        .container { width: 100%; max-width: 680px; background: #1e293b; padding: 25px; border-radius: 16px; box-shadow: 0 8px 25px rgba(0,0,0,0.6); border: 1px solid #334155; }
+        h1 { text-align: center; color: #38bdf8; font-size: 1.4rem; margin-bottom: 5px; }
+        .subtitle { text-align: center; color: #94a3b8; font-size: 0.85rem; margin-bottom: 20px; }
+        
+        .screen { display: none; }
+        .screen.active { display: block; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 8px; color: #cbd5e1; font-weight: bold; }
+        .form-group input { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #475569; background: #0f172a; color: #fff; font-size: 1rem; box-sizing: border-box; }
+        .btn-main { display: block; width: 100%; padding: 14px; background: #38bdf8; color: #0f172a; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; font-size: 1.05rem; transition: background 0.2s; margin-top: 10px; }
+        .btn-main:hover { background: #7dd3fc; }
+        
+        .menu-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 15px; }
+        .menu-btn { padding: 15px; background: #334155; color: #f8fafc; border: 2px solid #475569; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 0.95rem; text-align: left; transition: all 0.2s; display: flex; justify-content: space-between; align-items: center; }
+        .menu-btn:hover { background: #38bdf8; color: #0f172a; border-color: #38bdf8; }
+        .menu-btn span { font-size: 0.75rem; color: #94a3b8; background: #0f172a; padding: 4px 8px; border-radius: 6px; }
+
+        .header-info { display: flex; justify-content: space-between; align-items: center; background: #334155; padding: 10px 15px; border-radius: 8px; margin-bottom: 15px; font-weight: bold; font-size: 0.95rem; }
+        #timer { color: #facc15; }
+        .question-card { background: #334155; padding: 18px; border-radius: 10px; margin-bottom: 15px; border-left: 5px solid #38bdf8; }
+        .question-title { font-weight: bold; margin-bottom: 15px; color: #e2e8f0; font-size: 1.05rem; line-height: 1.4; }
+        .options button { display: block; width: 100%; padding: 12px; margin: 8px 0; background: #475569; color: white; border: none; border-radius: 8px; cursor: pointer; text-align: left; font-size: 0.95rem; transition: background 0.2s; }
+        .options button:hover { background: #64748b; }
+        .options button.correct { background: #22c55e !important; color: white; font-weight: bold; }
+        .options button.incorrect { background: #ef4444 !important; color: white; }
+        .feedback { margin-top: 12px; font-size: 0.9rem; font-style: italic; padding: 10px; border-radius: 6px; background: #1e293b; }
+        #next-btn { display: none; width: 100%; padding: 12px; background: #38bdf8; color: #0f172a; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; margin-top: 15px; font-size: 1rem; }
+        
+        .security-badge { background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; color: #fca5a5; padding: 10px; border-radius: 8px; font-size: 0.8rem; margin-top: 15px; text-align: center; }
+        .error-review-box { background: #334155; padding: 12px; border-radius: 8px; margin: 10px 0; text-align: left; border-left: 4px solid #ef4444; font-size: 0.9rem; }
+        .restart-btn { background: #22c55e; color: white; padding: 12px 25px; border: none; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; margin-top: 15px; width: 100%; }
+        
+        /* Anti-cheat overlay warning */
+        #cheat-warning { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.95); z-index: 9999; display: none; justify-content: center; align-items: center; flex-direction: column; text-align: center; padding: 20px; }
+    </style>
+</head>
+<body>
+
+<!-- Avertissement Anti-Triche / Anti-Abandon -->
+<div id="cheat-warning">
+    <h2 style="color: #ef4444; margin-bottom: 10px;">⚠️ ALERTE ANTI-TRICHE / ABANDON</h2>
+    <p style="color: #cbd5e1; max-width: 450px; margin-bottom: 20px;">Vous avez quitté la page ou tenté de basculer d'onglet pendant l'évaluation. Le concours Excellentia exige une concentration stricte. Veuillez rester sur l'interface.</p>
+    <button class="btn-main" style="max-width: 200px;" onclick="closeWarning()">Reprendre l'épreuve</button>
+</div>
+
+<div class="container">
+    
+    <!-- 1. ÉCRAN D'ACCUEIL -->
+    <div id="screen-welcome" class="screen active">
+        <h1>Préparation Test Excellentia 2026</h1>
+        <div class="subtitle">Module Spécial : Mathématiques, Études de Fonctions, Algèbre & Épreuves Logiques</div>
+        
+        <div class="form-group" style="margin-top: 20px;">
+            <label for="username">Nom complet ou Identifiant du Candidat :</label>
+            <input type="text" id="username" placeholder="Ex: Tshitenga Salomon..." autocomplete="off">
+        </div>
+
+        <div class="security-badge">
+            🔒 <strong>Sécurité active :</strong> Chronomètre de 60s par question, verrouillage des résultats jusqu'à la fin et système anti-fraude d'onglet activé.
+        </div>
+
+        <button class="btn-main" onclick="validUser()">Accéder au Centre de Mathématiques 🚀</button>
+    </div>
+
+    <!-- 2. MENU PRINCIPAL MATHS & LOGIQUE -->
+    <div id="screen-menu" class="screen">
+        <h1>Tableau de Bord - Math & Logique</h1>
+        <div class="subtitle" id="welcome-msg">Bienvenue</div>
+        <p style="font-size: 0.85rem; color: #94a3b8; text-align: center;">Sélectionnez votre parcours d'entraînement intensif :</p>
+        
+        <div class="menu-grid">
+            <div class="menu-btn" onclick="startQuiz('fondations')">
+                <div>🧮 1. Fondations & Algèbre (Bases, fractions, polynômes)</div>
+                <span>Niveau Base</span>
+            </div>
+            <div class="menu-btn" onclick="startQuiz('limites_asymptotes')">
+                <div>📈 2. Limites, Asymptotes & Parité</div>
+                <span>Intermédiaire</span>
+            </div>
+            <div class="menu-btn" onclick="startQuiz('derivees_fonctions')">
+                <div>📉 3. Dérivées, Fonctions & Optimisation</div>
+                <span>Avancé</span>
+            </div>
+            <div class="menu-btn" onclick="startQuiz('geometrie_calculs')">
+                <div>📐 4. Géométrie, Pourcentages & Calcul Rapide</div>
+                <span>Pratique</span>
+            </div>
+            <div class="menu-btn" onclick="startQuiz('logique_formelle')">
+                <div>🧩 5. Épreuves Logiques & Raisonnement</div>
+                <span>Logique</span>
+            </div>
+            <div class="menu-btn" style="background: #0284c7; border-color: #38bdf8;" onclick="startQuiz('all')">
+                <div>🔥 SIMULATION GLOBALE (100% Maths & Logique)</div>
+                <span>Intégral</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. ÉCRAN DE TEST -->
+    <div id="screen-quiz" class="screen">
+        <h1 id="quiz-category-title">Épreuve de Mathématiques</h1>
+        <div class="subtitle" id="candidate-display">Candidat</div>
+        
+        <div class="header-info">
+            <span id="progress">Question 1/X</span>
+            <span id="timer">⏱️ 60s</span>
+        </div>
+
+        <div class="question-card">
+            <div class="question-title" id="q-title"></div>
+            <div class="options" id="options-container"></div>
+            <div class="feedback" id="feedback" style="display:none;"></div>
+        </div>
+
+        <button id="next-btn" onclick="nextQuestion()">Question suivante ➡️</button>
+    </div>
+
+    <!-- 4. ÉCRAN DE RÉSULTATS ET CORRECTION DÉTAILLÉE -->
+    <div id="screen-result" class="screen" style="text-align: center;">
+        <h2>🏆 Résultats de l'Évaluation</h2>
+        <div id="result-summary-box" style="background: #334155; padding: 15px; border-radius: 8px; margin: 15px 0;"></div>
+        
+        <h3 style="color: #38bdf8; text-align: left; font-size: 1.1rem; margin-top: 20px;">📋 Carnet d'Erreurs & Explications Pédagogiques :</h3>
+        <div id="errors-container" style="max-height: 250px; overflow-y: auto; padding-right: 5px;"></div>
+
+        <button class="restart-btn" onclick="returnToMenu()">Retour au Tableau de Bord 🔄</button>
+    </div>
+
+</div>
+
+<script>
+// BASE DE DONNÉES MATHÉMATIQUES ET LOGIQUE EXCELLENTIA (Niveau Fondations, Intermédiaire et Avancé)
+const mathDb = {
+    fondations: [
+        { q: "Quel est l'ensemble de définition de la fonction f(x) = 1 / (x - 3) ?", options: ["R", "R \\ {3}", "R+*", "]3, +inf["], answer: 1, explanation: "Le dénominateur ne doit pas s'annuler, donc x - 3 != 0 => x != 3." },
+        { q: "Quel est le domaine de définition de f(x) = racine carrée de (x + 2) ?", options: ["R", "[-2, +inf[", "]-inf, -2]", "] -inf, +inf ["], answer: 1, explanation: "L'expression sous la racine carrée (radicande) doit être positive ou nulle : x + 2 >= 0 => x >= -2." },
+        { q: "Quelle est la factorisation de l'identité remarquable a^2 - b^2 ?", options: ["(a - b)^2", "(a + b)(a - b)", "a^2 + 2ab + b^2", "(a + b)^2 - ab"], answer: 1, explanation: "C'est la différence de deux carrés : a^2 - b^2 = (a + b)(a - b)." },
+        { q: "Que vaut la puissance 2^0 dans le calcul algébrique standard ?", options: ["0", "2", "1", "Indéterminé"], answer: 2, explanation: "Tout nombre non nul élevé à la puissance 0 vaut exactement 1." },
+        { q: "Simplifiez la fraction algébrique : 12x^3 / 4x", options: ["3x", "3x^2", "8x^2", "3"], answer: 1, explanation: "12/4 = 3 et x^3 / x = x^(3-1) = x^2. Résultat : 3x^2." },
+        { q: "Quelle est la somme des racines d'un polynôme du second degré ax^2 + bx + c selon Viète ?", options: ["-b/a", "c/a", "-c/b", "b/a"], answer: 0, explanation: "D'après les relations de Viète, la somme des racines vaut -b/a." },
+        { q: "Quel est le résultat du développement de (x + 3)^2 ?", options: ["x^2 + 9", "x^2 + 6x + 9", "x^2 + 3x + 9", "2x + 6"], answer: 1, explanation: "Carré d'une somme : (a+b)^2 = a^2 + 2ab + b^2 = x^2 + 2(3)x + 3^2 = x^2 + 6x + 9." },
+        { q: "Comment factorise-t-on une expression de la forme x^3 + y^3 (somme de cubes) ?", options: ["(x+y)(x^2 - xy + y^2)", "(x+y)(x^2 + xy + y^2)", "(x-y)(x^2 + xy + y^2)", "(x+y)^3"], answer: 0, explanation: "Formule de la somme de cubes : x^3 + y^3 = (x + y)(x^2 - xy + y^2)." }
+    ],
+    limites_asymptotes: [
+        { q: "Que vaut la limite fondamentale de sin(x) / x lorsque x tend vers 0 ?", options: ["0", "1", "+inf", "Indéterminé"], answer: 1, explanation: "C'est une limite fondamentale du taux d'accroissement de sinus en 0 qui vaut 1." },
+        { q: "Quelle est la limite de (e^x - 1) / x lorsque x tend vers 0 ?", options: ["0", "1", "e", "-1"], answer: 1, explanation: "C'est la dérivée de l'exponentielle en 0, qui vaut 1." },
+        { q: "Si la limite d'une fonction f(x) quand x tend vers a est l'infini (finie ou infinie pour x=a), que représente la droite x = a ?", options: ["Une asymptote horizontale", "Une asymptote verticale", "Une asymptote oblique", "Aucune asymptote"], answer: 1, explanation: "Une limite infinie en un point fixe a caractérise une asymptote verticale d'équation x = a." },
+        { q: "Comment détermine-t-on le coefficient directeur 'a' d'une asymptote oblique y = ax + b en +inf ?", options: ["En calculant la limite de f(x)/x en +inf", "En calculant f'(0)", "En faisant f(x) - x", "En étudiant la parité"], answer: 0, explanation: "Par définition, a = lim (f(x)/x) lorsque x tend vers +inf." },
+        { q: "Que vaut lim(x->+inf) ln(x) / x grâce aux croissances comparées ?", options: ["+inf", "1", "0", "-inf"], answer: 2, explanation: "La puissance l'emporte sur le logarithme à l'infini, la limite est donc 0." },
+        { q: "Une fonction f est dite paire si pour tout x de son domaine :", options: ["f(-x) = -f(x)", "f(-x) = f(x)", "f(x+T) = f(x)", "f(1/x) = f(x)"], answer: 1, explanation: "La parité paire se caractérise par la symétrie par rapport à l'axe des ordonnées : f(-x) = f(x)." },
+        { q: "Que vaut la limite de ln(x) lorsque x tend vers 0 par valeurs supérieures (0^+) ?", options: ["0", "+inf", "-inf", "1"], answer: 2, explanation: "Le logarithme tend vers moins l'infini quand son argument tend vers 0 par valeurs positives." }
+    ],
+    derivees_fonctions: [
+        { q: "Quelle est la formule de la dérivée de la fonction exponentielle composée e^(u(x)) ?", options: ["u'(x) * e^(u(x))", "e^(u(x)) / u'(x)", "u(x) * e^(u'(x))", "u'(x) / e^u"], answer: 0, explanation: "La dérivée de e^u est u' * e^u." },
+        { q: "Quelle est la dérivée de la fonction logarithmique ln(u(x)) pour u(x) > 0 ?", options: ["u'(x) * ln(u(x))", "u'(x) / u(x)", "1 / u'(x)", "u(x) / u'(x)"], answer: 1, explanation: "La dérivée de ln(u) est égale à u' / u." },
+        { q: "Que représente géographiquement le nombre dérivé f'(a) d'une fonction en un point a ?", options: ["L'aire sous la courbe", "Le coefficient directeur de la tangente à la courbe en ce point", "La valeur maximale de la fonction", "Le point d'inflexion"], answer: 1, explanation: "f'(a) est la pente (coefficient directeur) de la droite tangente à la courbe au point d'abscisse a." },
+        { q: "Si la dérivée f'(x) d'une fonction est strictement positive sur un intervalle I, que dire de la fonction f sur I ?", options: ["Elle est strictement décroissante", "Elle est constante", "Elle est strictement croissante", "Elle change de signe"], answer: 2, explanation: "Une dérivée positive indique que la fonction croît sur cet intervalle." },
+        { q: "Quelle est la dérivée du produit de deux fonctions (u * v)' ?", options: ["u' * v'", "u * v' + v * u'", "u' * v - v' * u", "(u' * v') / 2"], answer: 1, explanation: "La formule de Leibniz pour le produit est (u*v)' = u'v + uv'." },
+        { q: "Qu'appelle-t-on un point où la dérivée s'annule en changeant de signe ?", options: ["Une asymptote", "Un extremum (maximum ou minimum local)", "Un point de discontinuité", "Une racine évidente"], answer: 1, explanation: "Une annulation de la dérivée avec changement de signe correspond à un extremum local." }
+    ],
+    geometrie_calculs: [
+        { q: "Dans un triangle rectangle, que énonce le théorème de Pythagore ?", options: ["a^2 + b^2 = c^2 (c étant l'hypoténuse)", "a + b = c", "sin(a) = b/c", "L'aire vaut base * hauteur / 2"], answer: 0, explanation: "Le carré de la longueur de l'hypoténuse est égal à la somme des carrés des longueurs des deux autres côtés." },
+        { q: "Comment calcule-t-on une augmentation de 20% sur un article coûtant 150 unités ?", options: ["150 + 20", "150 * 1.20", "150 / 1.20", "150 - 30"], answer: 1, explanation: "Augmenter de 20% revient à multiplier par 1 + 20/100 = 1.20." },
+        { q: "Quel est le résultat de l'addition de fractions : 1/2 + 1/3 ?", options: ["2/5", "5/6", "1/6", "3/2"], answer: 1, explanation: "Mise au même dénominateur (6) : 3/6 + 2/6 = 5/6." },
+        { q: "Que stipule le théorème de Thalès dans un triangle ?", options: ["Des rapports de longueurs proportionnels formés par des droites parallèles", "L'égalité des angles adjacents", "Le calcul de la diagonale d'un carré", "La mesure des bissectrices"], answer: 0, explanation: "Thalès permet d'établir des égalités de proportions entre segments coupés par des parallèles." }
+    ],
+    logique_formelle: [
+        { q: "Qu'est-ce qu'une proposition en logique mathématique ?", options: ["Une question ouverte", "Un énoncé qui est soit vrai, soit faux, mais pas les deux en même temps", "Une formule de géométrie", "Une variable aléatoire"], answer: 1, explanation: "Une proposition possède une valeur de vérité binaire (Vrai ou Faux)." },
+        { q: "Quelle est la table de vérité de la conjonction (P ET Q) si P est Vrai et Q est Faux ?", options: ["Vrai", "Faux", "Indéterminé", "Équivalent à P"], answer: 1, explanation: "Le ET logique (conjonction) n'est vrai que si les deux propositions sont simultanément vraies." },
+        { q: "Quelle est la proposition contraposée de l'implication 'Si P, alors Q' (P => Q) ?", options: ["Si Q, alors P", "Si non Q, alors non P", "Si non P, alors non Q", "P et non Q"], answer: 1, explanation: "La contraposée de P => Q est logiquement équivalente : 'Si non Q, alors non P'." },
+        { q: "Que signifie le quantificateur universel (symbole ∀) ?", options: ["Il existe au moins un", "Pour tout / Quel que soit", "Aucun n'est", "Seulement si"], answer: 1, explanation: "Le symbole ∀ exprime une universalité : la propriété est vraie pour tous les éléments." },
+        { q: "Quel raisonnement consiste à prouver qu'une proposition est vraie en montrant que son negation mène à une contradiction ?", options: ["Raisonnement par récurrence", "Raisonnement par l'absurde", "Syllogisme déductif", "Modus ponens"], answer: 1, explanation: "Le raisonnement par l'absurde valide une thèse en rejetant l'hypothèse absurde de sa négation." },
+        { q: "Qu'appelle-t-on le 'Modus Ponens' en logique classique ?", options: ["Si P => Q et P est vrai, alors Q est vrai", "Si P => Q et Q est faux, alors P est faux", "P ou Q", "La négation d'une équivalence"], answer: 0, explanation: "Le Modus Ponens est la règle d'inférence fondamentale : affirmation de l'antécédent." }
+    ]
+};
+
+let currentUser = "";
+let currentQuestions = [];
+let currentIndex = 0;
+let score = 0;
+let timeLeft = 60;
+let timerId = null;
+let answered = false;
+let userMistakes = [];
+const optionLetters = ['A', 'B', 'C', 'D'];
+
+// Système Anti-Triche & Anti-Abandon (Détection de changement d'onglet)
+document.addEventListener("visibilitychange", function() {
+    if (document.hidden && document.getElementById('screen-quiz').classList.contains('active')) {
+        clearInterval(timerId);
+        document.getElementById('cheat-warning').style.display = 'flex';
+    }
+});
+
+function closeWarning() {
+    document.getElementById('cheat-warning').style.display = 'none';
+    startTimer();
+}
+
+function validUser() {
+    const input = document.getElementById('username').value.trim();
+    if (!input) {
+        alert("Veuillez entrer votre nom ou identifiant pour commencer l'épreuve !");
+        return;
+    }
+    currentUser = input;
+    document.getElementById('welcome-msg').innerText = `Candidat : ${currentUser} 🎯`;
+    switchScreen('screen-menu');
+}
+
+function switchScreen(screenId) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(screenId).classList.add('active');
+}
+
+function startQuiz(category) {
+    currentIndex = 0;
+    score = 0;
+    userMistakes = [];
+
+    if (category === 'all') {
+        currentQuestions = [
+            ...mathDb.fondations, 
+            ...mathDb.limites_asymptotes, 
+            ...mathDb.derivees_fonctions, 
+            ...mathDb.geometrie_calculs, 
+            ...mathDb.logique_formelle
+        ].sort(() => Math.random() - 0.5);
+        document.getElementById('quiz-category-title').innerText = "🔥 Simulation Globale (Maths & Logique)";
+    } else {
+        currentQuestions = [...mathDb[category]].sort(() => Math.random() - 0.5);
+        const titles = {
+            fondations: "🧮 Fondations & Algèbre",
+            limites_asymptotes: "📈 Limites, Asymptotes & Parité",
+            derivees_fonctions: "📉 Dérivées, Fonctions & Optimisation",
+            geometrie_calculs: "📐 Géométrie, Pourcentages & Calculs",
+            logique_formelle: "🧩 Épreuves Logiques & Raisonnement"
+        };
+        document.getElementById('quiz-category-title').innerText = titles[category];
+    }
+
+    document.getElementById('candidate-display').innerText = `Candidat : ${currentUser}`;
+    switchScreen('screen-quiz');
+    loadQuestion();
+}
+
+function loadQuestion() {
+    clearInterval(timerId);
+    timeLeft = 60;
+    answered = false;
+    document.getElementById('timer').innerText = `⏱️ ${timeLeft}s`;
+    document.getElementById('next-btn').style.display = 'none';
+    document.getElementById('feedback').style.display = 'none';
+    
+    const q = currentQuestions[currentIndex];
+    document.getElementById('progress').innerText = `Question ${currentIndex + 1}/${currentQuestions.length}`;
+    document.getElementById('q-title').innerText = q.q;
+
+    const optionsContainer = document.getElementById('options-container');
+    optionsContainer.innerHTML = '';
+    
+    q.options.forEach((opt, index) => {
+        const btn = document.createElement('button');
+        btn.innerText = optionLetters[index] + ") " + opt;
+        btn.onclick = () => selectAnswer(index);
+        optionsContainer.appendChild(btn);
+    });
+
+    startTimer();
+}
+
+function startTimer() {
+    timerId = setInterval(() => {
+        timeLeft--;
+        document.getElementById('timer').innerText = `⏱ ${timeLeft}s`;
+        if (timeLeft <= 0) {
+            clearInterval(timerId);
+            timeOut();
+        }
+    }, 1000);
+}
+
+function timeOut() {
+    if (answered) return;
+    answered = true;
+    const q = currentQuestions[currentIndex];
+    const buttons = document.querySelectorAll('#options-container button');
+    
+    buttons.forEach((b, idx) => {
+        b.disabled = true;
+        if (idx === q.answer) b.classList.add('correct');
+    });
+
+    userMistakes.push({
+        question: q.q,
+        userAnswer: "Temps écoulé (Non répondu)",
+        correctAnswer: q.options[q.answer],
+        explanation: q.explanation
+    });
+
+    const feedback = document.getElementById('feedback');
+    feedback.style.display = 'block';
+    feedback.innerHTML = "⏳ Temps écoulé ! Explication : " + q.explanation;
+    feedback.style.color = "#f87171";
+
+    showNextButton();
+}
+
+function selectAnswer(selectedOpt) {
+    if (answered) return;
+    answered = true;
+    clearInterval(timerId);
+
+    const q = currentQuestions[currentIndex];
+    const buttons = document.querySelectorAll('#options-container button');
+    
+    buttons.forEach((b, idx) => {
+        b.disabled = true;
+        if (idx === q.answer) {
+            b.classList.add('correct');
+        } else if (idx === selectedOpt && idx !== q.answer) {
+            b.classList.add('incorrect');
+        }
+    });
+
+    const feedback = document.getElementById('feedback');
+    feedback.style.display = 'block';
+
+    if (selectedOpt === q.answer) {
+        score++;
+        feedback.innerHTML = "✅ Correct ! " + q.explanation;
+        feedback.style.color = "#4ade80";
+    } else {
+        userMistakes.push({
+            question: q.q,
+            userAnswer: q.options[selectedOpt],
+            correctAnswer: q.options[q.answer],
+            explanation: q.explanation
+        });
+        feedback.innerHTML = "❌ Incorrect. Explication : " + q.explanation;
+        feedback.style.color = "#f87171";
+    }
+
+    showNextButton();
+}
+
+function showNextButton() {
+    const nextBtn = document.getElementById('next-btn');
+    if (currentIndex < currentQuestions.length - 1) {
+        nextBtn.innerText = "Question suivante ➡️";
+    } else {
+        nextBtn.innerText = "Voir mes résultats officiels 🏆";
+    }
+    nextBtn.style.display = 'block';
+}
+
+function nextQuestion() {
+    currentIndex++;
+    if (currentIndex < currentQuestions.length) {
+        loadQuestion();
+    } else {
+        showResults();
+    }
+}
+
+function showResults() {
+    switchScreen('screen-result');
+    const totalQ = currentQuestions.length;
+    const percentage = Math.round((score / totalQ) * 100);
+
+    let summaryHtml = `
+        <p><strong>Candidat :</strong> ${currentUser}</p>
+        <p><strong>Score Brut :</strong> ${score} / ${totalQ} points</p>
+        <p><strong>Pourcentage de réussite :</strong> <span style="color: #38bdf8; font-size: 1.3rem; font-weight: bold;">${percentage}%</span></p>
+    `;
+
+    if (percentage >= 80) {
+        summaryHtml += `<p style="color: #4ade80; font-weight: bold; margin-top: 10px;">🌟 Niveau Excellent ! Maîtrise parfaite des mathématiques et de la logique.</p>`;
+    } else if (percentage >= 50) {
+        summaryHtml += `<p style="color: #facc15; font-weight: bold; margin-top: 10px;">📈 Bon niveau général. Consolidez les notions du carnet d'erreurs ci-dessous.</p>`;
+    } else {
+        summaryHtml += `<p style="color: #f87171; font-weight: bold; margin-top: 10px;">⚠️ Entraînement requis. Révisez les blocs fondamentaux et refaites une simulation.</p>`;
+    }
+
+    document.getElementById('result-summary-box').innerHTML = summaryHtml;
+
+    const errorsContainer = document.getElementById('errors-container');
+    errorsContainer.innerHTML = '';
+
+    if (userMistakes.length === 0) {
+        errorsContainer.innerHTML = `<p style="color: #4ade80; text-align: center; padding: 10px;">🎉 Zéro faute ! Aucune erreur enregistrée lors de cette session.</p>`;
+    } else {
+        userMistakes.forEach((err, idx) => {
+            errorsContainer.innerHTML += `
+                <div class="error-review-box">
+                    <p style="margin: 0 0 5px 0; color: #f8fafc; font-weight: bold;">#${idx + 1} - ${err.question}</p>
+                    <p style="margin: 0 0 3px 0; color: #f87171;">❌ Votre réponse : ${err.userAnswer}</p>
+                    <p style="margin: 0 0 5px 0; color: #4ade80;">✔️ Bonne réponse : ${err.correctAnswer}</p>
+                    <p style="margin: 0; color: #94a3b8; font-style: italic; font-size: 0.85rem;">💡 <strong>Explication :</strong> ${err.explanation}</p>
+                </div>
+            `;
+        });
+    }
+}
+
+function returnToMenu() {
+    switchScreen('screen-menu');
+}
+</script>
+</body>
+</html>
